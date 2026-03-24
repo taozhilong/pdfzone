@@ -78,7 +78,29 @@
 
 <header>
   <div class="header-inner">
-    <a href="#" class="logo" onclick="showHome();return false">PDF<span>Zone</span></a>
+    <a href="#" class="logo" onclick="showHome();return false">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 50" height="40" style="vertical-align:middle">
+        <defs>
+          <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2563eb"/>
+            <stop offset="100%" stop-color="#1d4ed8"/>
+          </linearGradient>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="5" width="40" height="45" rx="8" fill="url(#bg)"/>
+        <rect x="0" y="5" width="40" height="14" rx="8" fill="#1e40af"/>
+        <rect x="0" y="16" width="40" height="6" fill="#1e40af"/>
+        <path d="M28 5 L40 5 Q40 5 40 17 L40 17 L28 17 Z" fill="#3b82f6"/>
+        <path d="M28 5 Q36 5 40 14 Q36 14 36 17 L28 17 Z" fill="#60a5fa"/>
+        <path d="M28 5 L40 17 L28 17 Z" fill="#93c5fd"/>
+        <text x="20" y="38" font-family="Arial, sans-serif" font-size="11" font-weight="900" fill="white" text-anchor="middle">PDF</text>
+        <path d="M44 3 L46 8 L51 8 L47 12 L49 17 L44 13 L39 17 L41 12 L37 8 L42 8 Z" fill="url(#grad)"/>
+        <text x="62" y="35" font-family="Arial, sans-serif" font-size="26" font-weight="900" fill="#1e293b">Zone</text>
+      </svg>
+    </a>
   </div>
 </header>
 
