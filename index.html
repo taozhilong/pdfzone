@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDFZone - 免费在线PDF工具</title>
+  <meta name="description" content="完全免费的在线PDF工具箱：合并、拆分、压缩、转换图片、提取文字，无需注册，即用即走。">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--primary:#2563eb;--primary-dark:#1d4ed8;--bg:#f8fafc;--card:#fff;--text:#1e293b;--text-light:#64748b;--border:#e2e8f0;--radius:12px}
+    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+    header{background:var(--card);border-bottom:1px solid var(--border);padding:16px 0;position:sticky;top:0;z-index:100}
+    .header-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+    .logo{font-size:24px;font-weight:800;color:var(--primary);text-decoration:none}
+    .logo span{color:#f59e0b}
+    .hero{text-align:center;padding:60px 20px 40px;max-width:800px;margin:0 auto}
+    .hero h1{font-size:42px;font-weight:800;margin-bottom:16px;background:linear-gradient(135deg,#1e293b 0%,#2563eb 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:18px;color:var(--text-light);margin-bottom:32px}
+    .tagline{display:inline-flex;align-items:center;gap:8px;background:#dbeafe;color:#1e40af;padding:8px 16px;border-radius:100px;font-size:14px;font-weight:500;margin-bottom:24px}
+    .tools-section{max-width:1200px;margin:0 auto;padding:20px}
+    .section-title{font-size:13px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+    .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-bottom:40px}
+    .tool-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:inherit;display:block}
+    .tool-card:hover{border-color:var(--primary);box-shadow:0 4px 12px rgba(37,99,235,0.1);transform:translateY(-2px)}
+    .tool-icon{width:48px;height:48px;background:#dbeafe;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px}
+    .tool-card h3{font-size:16px;font-weight:600;margin-bottom:8px}
+    .tool-card p{font-size:14px;color:var(--text-light)}
+    .badge{display:inline-block;background:#dcfce7;color:#166534;font-size:11px;font-weight:600;padding:2px 8px;border-radius:100px;margin-top:8px}
+    #tool-view{display:none;max-width:700px;margin:0 auto;padding:40px 20px}
+    #tool-view.active{display:block}
+    .back-btn{display:inline-flex;align-items:center;gap:8px;color:var(--text-light);text-decoration:none;font-size:14px;margin-bottom:24px;cursor:pointer}
+    .back-btn:hover{color:var(--text)}
+    .tool-view-header{margin-bottom:32px}
+    .tool-view-header h2{font-size:28px;font-weight:700;margin-bottom:8px}
+    .tool-view-header p{color:var(--text-light)}
+    .drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:60px 20px;text-align:center;transition:all 0.2s;cursor:pointer;background:var(--card);margin-bottom:20px}
+    .drop-zone:hover,.drop-zone.dragover{border-color:var(--primary);background:#eff6ff}
+    .drop-zone-icon{font-size:48px;margin-bottom:16px}
+    .drop-zone h3{font-size:18px;margin-bottom:8px}
+    .drop-zone p{color:var(--text-light);font-size:14px}
+    .drop-zone input[type="file"]{display:none}
+    .file-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:20px;overflow:hidden}
+    .file-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);font-size:14px}
+    .file-item:last-child{border-bottom:none}
+    .file-name{display:flex;align-items:center;gap:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .file-size{color:var(--text-light);font-size:12px}
+    .remove-btn{background:none;border:none;cursor:pointer;color:var(--text-light);padding:4px;border-radius:4px;transition:all 0.2s}
+    .remove-btn:hover{background:#fee2e2;color:#ef4444}
+    .options-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+    .options-panel h4{font-size:14px;font-weight:600;margin-bottom:12px}
+    .option-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .option-row:last-child{margin-bottom:0}
+    .option-row label{font-size:14px}
+    .option-row select,.option-row input[type="text"],.option-row input[type="number"]{padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:var(--bg)}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 24px;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;width:100%}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-primary:disabled{background:#94a3b8;cursor:not-allowed}
+    .btn-secondary{background:var(--bg);color:var(--text);border:1px solid var(--border)}
+    .progress-bar{width:100%;height:6px;background:var(--border);border-radius:100px;overflow:hidden;margin-bottom:16px;display:none}
+    .progress-bar.active{display:block}
+    .progress-fill{height:100%;background:var(--primary);border-radius:100px;transition:width 0.3s;width:0%}
+    .result-box{background:#dcfce7;border:1px solid #86efac;border-radius:var(--radius);padding:24px;text-align:center;display:none;margin-bottom:20px}
+    .result-box.active{display:block}
+    .result-box h3{color:#166534;margin-bottom:8px}
+    .result-box a{display:inline-flex;align-items:center;gap:8px;margin-top:12px;color:var(--primary);text-decoration:none;font-weight:600}
+    .error-box{background:#fee2e2;border:1px solid #fecaca;border-radius:var(--radius);padding:16px;color:#991b1b;font-size:14px;display:none;margin-bottom:16px}
+    .error-box.active{display:block}
+    footer{text-align:center;padding:40px 20px;color:var(--text-light);font-size:14px;border-top:1px solid var(--border);margin-top:40px}
+    footer a{color:var(--text-light);text-decoration:none}
+    footer a:hover{color:var(--primary)}
+    .ad-banner{background:#f1f5f9;border:1px dashed var(--border);border-radius:var(--radius);padding:20px;text-align:center;color:var(--text-light);font-size:12px;margin:20px 0}
+    #about{margin-top:60px}
+    @media(max-width:640px){.hero h1{font-size:28px}.tools-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo" onclick="showHome();return false">PDF<span>Zone</span></a>
+  </div>
+</header>
+
+<div id="home-view">
+  <div class="hero">
+    <div class="tagline">完全免费 · 无需注册 · 隐私安全</div>
+    <h1>在线 PDF 工具箱</h1>
+    <p>合并、拆分、压缩、转换图片、提取文字<br>所有操作在浏览器内完成，文件永不离开你的设备</p>
+  </div>
+  <div class="tools-section">
+    <div class="section-title">所有工具</div>
+    <div class="tools-grid">
+      <div class="tool-card" onclick="openTool('merge')">
+        <div class="tool-icon">📑</div>
+        <h3>合并 PDF</h3>
+        <p>将多个 PDF 文件合并为一个</p>
+        <span class="badge">最常用</span>
+      </div>
+      <div class="tool-card" onclick="openTool('split')">
+        <div class="tool-icon">✂️</div>
+        <h3>拆分 PDF</h3>
+        <p>按页数或范围拆分 PDF</p>
+      </div>
+      <div class="tool-card" onclick="openTool('compress')">
+        <div class="tool-icon">📦</div>
+        <h3>压缩 PDF</h3>
+        <p>减小 PDF 文件大小</p>
+      </div>
+      <div class="tool-card" onclick="openTool('toImage')">
+        <div class="tool-icon">🖼️</div>
+        <h3>PDF 转图片</h3>
+        <p>PDF 页面转换为 JPG/PNG</p>
+      </div>
+      <div class="tool-card" onclick="openTool('fromImage')">
+        <div class="tool-icon">📄</div>
+        <h3>图片转 PDF</h3>
+        <p>JPG/PNG 图片合并为 PDF</p>
+      </div>
+      <div class="tool-card" onclick="openTool('extractText')">
+        <div class="tool-icon">📝</div>
+        <h3>提取文字</h3>
+        <p>从 PDF 中提取文本内容</p>
+      </div>
+    </div>
+    <div class="ad-banner">广告位 · Google AdSense</div>
+    <div id="about">
+      <div class="section-title">关于</div>
+      <div class="tools-grid">
+        <div class="tool-card" style="cursor:default">
+          <div class="tool-icon">🔒</div>
+          <h3>隐私保护</h3>
+          <p>所有处理在浏览器完成，文件永不上传到服务器</p>
+        </div>
+        <div class="tool-card" style="cursor:default">
+          <div class="tool-icon">⚡</div>
+          <h3>极速处理</h3>
+          <p>本地运算，无需等待上传下载</p>
+        </div>
+        <div class="tool-card" style="cursor:default">
+          <div class="tool-icon">💯</div>
+          <h3>完全免费</h3>
+          <p>无广告内购，无使用限制</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tool-view">
+  <a class="back-btn" onclick="showHome();return false">← 返回工具箱</a>
+  <div class="tool-view-header">
+    <h2 id="tool-title">工具名称</h2>
+    <p id="tool-desc">工具描述</p>
+  </div>
+  <div class="ad-banner">广告位 · Google AdSense</div>
+  <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+    <div class="drop-zone-icon">📁</div>
+    <h3>点击或拖拽文件到这里</h3>
+    <p id="drop-hint">支持 PDF、JPG、PNG 文件</p>
+    <input type="file" id="file-input">
+  </div>
+  <div class="file-list" id="file-list" style="display:none"></div>
+  <div class="error-box" id="error-box"></div>
+  <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="options-panel" id="options-panel"></div>
+  <div class="result-box" id="result-box">
+    <h3 id="result-title">✅ 处理完成！</h3>
+    <p id="result-info"></p>
+    <a id="download-link" href="#" download>⬇️ 点击下载</a>
+  </div>
+  <button class="btn btn-primary" id="process-btn" onclick="processFiles()" disabled>开始处理</button>
+</div>
+
+<footer>
+  <p>© 2026 PDFZone · 完全免费 · 文件隐私安全</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const { PDFDocument } = PDFLib;
+
+let currentTool = null;
+let selectedFiles = [];
+
+const tools = {
+  merge:{ title:'合并 PDF', desc:'将多个 PDF 文件合并为一个，按选择顺序合并', hint:'选择多个 PDF 文件', accept:'.pdf', multi:true },
+  split:{ title:'拆分 PDF', desc:'按指定页数或范围将 PDF 拆分成多个文件', hint:'选择一个 PDF 文件', accept:'.pdf', multi:false },
+  compress:{ title:'压缩 PDF', desc:'减小 PDF 文件大小，同时尽量保持质量', hint:'选择一个 PDF 文件', accept:'.pdf', multi:false },
+  toImage:{ title:'PDF 转图片', desc:'将 PDF 每一页转换为 JPG 图片', hint:'选择一个 PDF 文件', accept:'.pdf', multi:false },
+  fromImage:{ title:'图片转 PDF', desc:'将 JPG/PNG 图片合并为一个 PDF 文件', hint:'选择多张 JPG/PNG 图片', accept:'.jpg,.jpeg,.png', multi:true },
+  extractText:{ title:'提取文字', desc:'从 PDF 中提取所有文本内容', hint:'选择一个 PDF 文件', accept:'.pdf', multi:false }
+};
+
+function showHome() {
+  document.getElementById('home-view').style.display='block';
+  document.getElementById('tool-view').classList.remove('active');
+  selectedFiles=[];
+  updateFileList();
+}
+
+function openTool(toolId) {
+  currentTool=toolId;
+  const t=tools[toolId];
+  document.getElementById('home-view').style.display='none';
+  document.getElementById('tool-view').classList.add('active');
+  document.getElementById('tool-title').textContent=t.title;
+  document.getElementById('tool-desc').textContent=t.desc;
+  document.getElementById('drop-hint').textContent=t.hint;
+  const inp=document.getElementById('file-input');
+  inp.accept=t.accept;
+  inp.multiple=t.multi;
+  selectedFiles=[];
+  updateFileList();
+  buildOptions();
+  hideResult();
+  hideError();
+  document.getElementById('process-btn').disabled=true;
+  document.getElementById('file-input').value='';
+}
+
+function buildOptions() {
+  const p=document.getElementById('options-panel');
+  if(currentTool==='split') {
+    p.innerHTML=`<h4>拆分方式</h4>
+      <div class="option-row"><input type="radio" name="splitType" value="ranges" id="r1" checked onchange="toggleSplit()"><label for="r1">按范围拆分</label></div>
+      <div class="option-row"><input type="radio" name="splitType" value="every" id="r2" onchange="toggleSplit()"><label for="r2">每 N 页一份</label></div>
+      <div class="option-row" id="rangeRow"><label>页码范围：</label><input type="text" id="rangesIn" placeholder="如: 1-3, 4-6" style="flex:1"></div>
+      <div class="option-row" id="everyRow" style="display:none"><label>每</label><input type="number" id="everyIn" value="1" min="1" style="width:60px"><label>页一份</label></div>`;
+  } else if(currentTool==='compress') {
+    p.innerHTML=`<h4>压缩质量</h4>
+      <div class="option-row"><select id="qSelect"><option value="extreme">极限压缩</option><option value="recommended" selected>推荐（平衡）</option><option value="low">低压缩（高质量）</option></select></div>`;
+  } else if(currentTool==='toImage') {
+    p.innerHTML=`<h4>输出格式</h4>
+      <div class="option-row">
+        <select id="imgFmt"><option value="jpeg" selected>JPG</option><option value="png">PNG</option></select>
+        <label>质量：</label><input type="number" id="imgQ" value="90" min="10" max="100" style="width:60px">%
+      </div>`;
+  } else {
+    p.innerHTML='';
+  }
+}
+
+function toggleSplit() {
+  const t=document.querySelector('input[name="splitType"]:checked').value;
+  document.getElementById('rangeRow').style.display=t==='ranges'?'flex':'none';
+  document.getElementById('everyRow').style.display=t==='every'?'flex':'none';
+}
+
+const dz=document.getElementById('drop-zone');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover')});
+dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');handleFiles(e.dataTransfer.files)});
+document.getElementById('file-input').addEventListener('change',e=>handleFiles(e.target.files));
+
+function handleFiles(files) {
+  const t=tools[currentTool];
+  for(let f of files) {
+    if(selectedFiles.length>=20)break;
+    if(!t.multi&&selectedFiles.length>=1)break;
+    selectedFiles.push(f);
+  }
+  updateFileList();
+  document.getElementById('process-btn').disabled=selectedFiles.length===0;
+  hideError();
+  hideResult();
+}
+
+function updateFileList() {
+  const l=document.getElementById('file-list');
+  if(selectedFiles.length===0){l.style.display='none';return;}
+  l.style.display='block';
+  l.innerHTML=selectedFiles.map((f,i)=>`<div class="file-item"><span class="file-name"><span>📄</span> ${esc(f.name)}</span><span style="display:flex;align-items:center;gap:12px"><span class="file-size">${fs(f.size)}</span><button class="remove-btn" onclick="rm(${i})">✕</button></span></div>`).join('');
+}
+
+function rm(i){selectedFiles.splice(i,1);updateFileList();document.getElementById('process-btn').disabled=selectedFiles.length===0;}
+
+function fs(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function showError(m){const e=document.getElementById('error-box');e.textContent=m;e.classList.add('active');}
+function hideError(){document.getElementById('error-box').classList.remove('active');}
+function showResult(msg,url,name){const r=document.getElementById('result-box');document.getElementById('result-info').textContent=msg;const l=document.getElementById('download-link');l.href=url;l.download=name;r.classList.add('active');}
+function hideResult(){document.getElementById('result-box').classList.remove('active');}
+function setProgress(p){document.getElementById('progress-bar').classList.add('active');document.getElementById('progress-fill').style.width=p+'%';}
+function resetP(){document.getElementById('progress-bar').classList.remove('active');document.getElementById('progress-fill').style.width='0%';}
+
+async function processFiles() {
+  hideError();hideResult();
+  const btn=document.getElementById('process-btn');
+  btn.disabled=true;btn.textContent='处理中...';
+  setProgress(10);
+  try {
+    if(currentTool==='merge')await mergePDFs();
+    else if(currentTool==='split')await splitPDF();
+    else if(currentTool==='compress')await compressPDF();
+    else if(currentTool==='toImage')await pdfToImages();
+    else if(currentTool==='fromImage')await imagesToPDF();
+    else if(currentTool==='extractText')await extractText();
+  } catch(e){showError('处理失败: '+e.message);console.error(e);}
+  finally{btn.disabled=false;btn.textContent='开始处理';resetP();}
+}
+
+async function mergePDFs() {
+  if(selectedFiles.length<2)throw new Error('请至少选择2个PDF');
+  setProgress(30);
+  const merged=await PDFDocument.create();
+  for(let i=0;i<selectedFiles.length;i++) {
+    const buf=await selectedFiles[i].arrayBuffer();
+    const pdf=await PDFDocument.load(buf);
+    const pages=await merged.copyPages(pdf,pdf.getPageIndices());
+    pages.forEach(p=>merged.addPage(p));
+    setProgress(30+(i/selectedFiles.length)*60);
+  }
+  setProgress(95);
+  const bytes=await merged.save();
+  showResult('已合并 '+selectedFiles.length+' 个文件',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'merged.pdf');
+}
+
+async function splitPDF() {
+  if(selectedFiles.length!==1)throw new Error('请选择1个PDF');
+  setProgress(20);
+  const buf=await selectedFiles[0].arrayBuffer();
+  const pdf=await PDFDocument.load(buf);
+  const total=pdf.getPageCount();
+  const type=document.querySelector('input[name="splitType"]:checked').value;
+  let ranges=[];
+  if(type==='every') {
+    const n=parseInt(document.getElementById('everyIn').value)||1;
+    for(let i=0;i<total;i+=n)ranges.push([i,Math.min(i+n-1,total-1)]);
+  } else {
+    const inp=document.getElementById('rangesIn').value.trim();
+    if(!inp)throw new Error('请输入页码范围');
+    for(let p of inp.split(',')) {
+      const m=p.trim().match(/^(\d+)(?:-(\d+))?$/);
+      if(!m)throw new Error('范围格式错误: '+p);
+      ranges.push([parseInt(m[1])-1,m[2]?parseInt(m[2])-1:parseInt(m[1])-1]);
+    }
+  }
+  setProgress(40);
+  if(ranges.length===1) {
+    const np=await PDFDocument.create();
+    const ps=await np.copyPages(pdf,[ranges[0][0]]);
+    ps.forEach(p=>np.addPage(p));
+    const b=await np.save();
+    showResult('已拆分为1个文件',URL.createObjectURL(new Blob([b],{type:'application/pdf'})),'split.pdf');
+  } else {
+    const zip=new JSZip();
+    for(let i=0;i<ranges.length;i++) {
+      const [s,e]=ranges[i];
+      const np=await PDFDocument.create();
+      const ps=await np.copyPages(pdf,Array.from({length:e-s+1},(_,k)=>s+k));
+      ps.forEach(p=>np.addPage(p));
+      zip.file('pages_'+(s+1)+'-'+(e+1)+'.pdf',await np.save());
+      setProgress(40+(i/ranges.length)*50);
+    }
+    const content=await zip.generateAsync({type:'blob'});
+    showResult('已拆分为 '+ranges.length+' 个文件',URL.createObjectURL(content),'split.zip');
+  }
+}
+
+async function compressPDF() {
+  if(selectedFiles.length!==1)throw new Error('请选择1个PDF');
+  setProgress(30);
+  const buf=await selectedFiles[0].arrayBuffer();
+  const pdf=await PDFDocument.load(buf);
+  const opt={useFlateDecoder:true};
+  setProgress(60);
+  const bytes=await pdf.save(opt);
+  const ratio=(bytes.length/selectedFiles[0].size*100).toFixed(1);
+  showResult('压缩后: '+fs(bytes.length)+' (原始: '+fs(selectedFiles[0].size)+', '+ratio+'%)',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'compressed.pdf');
+}
+
+async function pdfToImages() {
+  if(selectedFiles.length!==1)throw new Error('请选择1个PDF');
+  setProgress(20);
+  const buf=await selectedFiles[0].arrayBuffer();
+  const doc=await pdfjsLib.getDocument({data:buf}).promise;
+  const fmt=(document.getElementById('imgFmt')?.value||'jpeg');
+  const q=parseInt(document.getElementById('imgQ')?.value||90)/100;
+  const zip=new JSZip();
+  for(let i=1;i<=doc.numPages;i++) {
+    const page=await doc.getPage(i);
+    const vp=page.getViewport({scale:2});
+    const cv=document.createElement('canvas');
+    cv.width=vp.width;cv.height=vp.height;
+    await page.render({canvasContext:cv.getContext('2d'),viewport:vp}).promise;
+    const ext=fmt==='jpeg'?'jpg':'png';
+    zip.file('page_'+i+'.'+ext,cv.toDataURL('image/'+fmt,q).split(',')[1],{base64:true});
+    setProgress(20+(i/doc.numPages)*70);
+  }
+  const content=await zip.generateAsync({type:'blob'});
+  showResult('已将 '+doc.numPages+' 页转换为图片',URL.createObjectURL(content),'images.zip');
+}
+
+async function imagesToPDF() {
+  if(selectedFiles.length<1)throw new Error('请至少选择1张图片');
+  setProgress(20);
+  const pdf=await PDFDocument.create();
+  for(let i=0;i<selectedFiles.length;i++) {
+    const f=selectedFiles[i];
+    const ext=f.name.split('.').pop().toLowerCase();
+    let img;
+    if(ext==='png'){img=await pdf.embedPng(await f.arrayBuffer());}
+    else{img=await pdf.embedJpg(await f.arrayBuffer());}
+    const pg=pdf.addPage([img.width,img.height]);
+    pg.drawImage(img,{x:0,y:0,width:img.width,height:img.height});
+    setProgress(20+(i/selectedFiles.length)*70);
+  }
+  setProgress(95);
+  const bytes=await pdf.save();
+  showResult('已生成 PDF，共 '+selectedFiles.length+' 页',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'images.pdf');
+}
+
+async function extractText() {
+  if(selectedFiles.length!==1)throw new Error('请选择1个PDF');
+  setProgress(20);
+  const buf=await selectedFiles[0].arrayBuffer();
+  const doc=await pdfjsLib.getDocument({data:buf}).promise;
+  let text='';
+  for(let i=1;i<=doc.numPages;i++) {
+    const page=await doc.getPage(i);
+    const content=await page.getTextContent();
+    text+=content.items.map(it=>it.str).join(' ')+'\n\n';
+    setProgress(20+(i/doc.numPages)*70);
+  }
+  const blob=new Blob([text],{type:'text/plain'});
+  showResult('已提取 '+doc.numPages+' 页文字',URL.createObjectURL(blob),'extracted.txt');
+}
+</script>
+</body>
+</html>
