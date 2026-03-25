@@ -111,9 +111,9 @@
     </svg>
   </a>
   <nav>
-    <a href="#" onclick="document.getElementById('pdf-tools').scrollIntoView({behavior:'smooth'});return false">PDF工具</a>
-    <a href="#" onclick="document.getElementById('img-tools').scrollIntoView({behavior:'smooth'});return false">图片工具</a>
-    <a href="#" onclick="document.getElementById('dev-tools').scrollIntoView({behavior:'smooth'});return false">开发者</a>
+    <a href="#" onclick="document.getElementById('pdf-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_pdf">PDF工具</a>
+    <a href="#" onclick="document.getElementById('img-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_img">图片工具</a>
+    <a href="#" onclick="document.getElementById('dev-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_dev">开发者</a>
     <a href="https://github.com/taozhilong/pdfzone/issues" target="_blank" rel="noopener">问题反馈</a>
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">🌐 EN</button>
   </nav>
@@ -121,15 +121,15 @@
 
 <div id="home-view">
   <div class="hero">
-    <div class="tag">完全免费 · 无需注册 · 隐私安全</div>
-    <h1>免费在线工具箱</h1>
-    <p>PDF处理 · 图片压缩 · 二维码生成 · 编码转换<br>所有操作在浏览器完成，文件永不离开你的设备</p>
+    <div class="tag" data-i18n="hero_tag">完全免费 · 无需注册 · 隐私安全</div>
+    <h1 data-i18n="hero_title">免费在线工具箱</h1>
+    <p><span data-i18n="hero_desc">PDF处理 · 图片压缩 · 二维码生成 · 编码转换<br>所有操作在浏览器完成，文件永不离开你的设备</span></p>
   </div>
   <div class="ts">
     <div class="cat" id="pdf-tools">
-      <div class="ct"><span>PDF 工具</span></div>
+      <div class="ct"><span data-i18n="cat_pdf">PDF 工具</span></div>
       <div class="grid">
-        <div class="tc" onclick="openTool('merge')"><div class="ti">📑</div><h3>合并 PDF</h3><p>将多个 PDF 文件合并为一个</p><span class="bd">热门</span></div>
+        <div class="tc" onclick="openTool('merge')"><div class="ti">📑</div><h3>合并 PDF</h3><p>将多个 PDF 文件合并为一个</p><span class="bd" data-i18n="badge_hot">热门</span></div>
         <div class="tc" onclick="openTool('split')"><div class="ti">✂️</div><h3>拆分 PDF</h3><p>按页数或范围拆分 PDF</p></div>
         <div class="tc" onclick="openTool('compress')"><div class="ti">📦</div><h3>压缩 PDF</h3><p>减小 PDF 文件大小</p></div>
         <div class="tc" onclick="openTool('rotate')"><div class="ti">🔄</div><h3>旋转 PDF</h3><p>旋转 PDF 页面角度</p></div>
@@ -141,7 +141,7 @@
       </div>
     </div>
     <div class="cat" id="img-tools">
-      <div class="ct"><span>图片 工具</span></div>
+      <div class="ct"><span data-i18n="cat_img">图片 工具</span></div>
       <div class="grid">
         <div class="tc" onclick="openTool('imgCompress')"><div class="ti">🗜️</div><h3>图片压缩</h3><p>压缩 JPG/PNG 图片大小</p></div>
         <div class="tc" onclick="openTool('imgResize')"><div class="ti">📐</div><h3>调整图片大小</h3><p>修改图片尺寸和分辨率</p></div>
@@ -150,7 +150,7 @@
       </div>
     </div>
     <div class="cat" id="dev-tools">
-      <div class="ct"><span>开发者 工具</span></div>
+      <div class="ct"><span data-i18n="cat_dev">开发者 工具</span></div>
       <div class="grid">
         <div class="tc" onclick="openTool('qrCode')"><div class="ti">📱</div><h3>二维码生成</h3><p>文字/链接生成二维码图片</p></div>
         <div class="tc" onclick="openTool('base64')"><div class="ti">🔣</div><h3>Base64 编解码</h3><p>文本与 Base64 字符串互转</p></div>
@@ -160,7 +160,7 @@
     </div>
     <div class="ad">广告位 · Google AdSense</div>
     <div class="cat">
-      <div class="ct"><span>关于</span></div>
+      <div class="ct"><span data-i18n="cat_about">关于</span></div>
       <div class="grid">
         <div class="tc" style="cursor:default"><div class="ti">🔒</div><h3>隐私保护</h3><p>所有处理在浏览器完成，文件永不上传到服务器</p></div>
         <div class="tc" style="cursor:default"><div class="ti">⚡</div><h3>极速处理</h3><p>本地运算，无需等待上传下载</p></div>
