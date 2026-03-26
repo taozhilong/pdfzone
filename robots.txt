@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://taozhilong.github.io/pdfzone/sitemap.xml
