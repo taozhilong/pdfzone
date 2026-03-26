@@ -235,7 +235,7 @@ function openTool(id){
   const inp=document.getElementById('fi');
   if(t.accept){inp.accept=t.accept;inp.multiple=t.multi;inp.disabled=false;}
   else{inp.removeAttribute('accept');inp.removeAttribute('multiple');inp.disabled=true;}
-  files=[];updateFileList();buildOptions();hideResult();hideError();hideTextOutput();
+  files=[];updateFileList();buildOptions();hideResult();hideError();hideTextOutput();applyLang();
   document.getElementById('qrc').style.display='none';
   document.getElementById('dz').style.display=t.needsFiles?'block':'none';
   document.getElementById('pbBtn').disabled=!t.needsFiles;
