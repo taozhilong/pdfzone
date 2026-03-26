@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -171,7 +171,7 @@
 </div>
 
 <div id="tv">
-  <a class="bk" onclick="showHome();return false">← 返回工具箱</a>
+  <a class="bk" onclick="showHome();return false" data-i18n="back_to_tools">← 返回工具箱</a>
   <div class="th"><h2 id="tt">工具名称</h2><p id="td">工具描述</p></div>
   <div class="ad" data-i18n="ad_placeholder">广告位 · Google AdSense</div>
   <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
@@ -186,7 +186,7 @@
   <div class="op" id="op"></div>
   <canvas id="qrc" class="qr" style="display:none"></canvas>
   <div class="to" id="to"></div>
-  <div class="rbx" id="rbx"><h3 id="rth">✅ 处理完成！</h3><p id="rti"></p><a id="dl" href="#" download>⬇️ 点击下载</a></div>
+  <div class="rbx" id="rbx"><h3 id="rth" data-i18n="rbx_title">✅ 处理完成！</h3><p id="rti"></p><a id="dl" href="#" download data-i18n="dl_text">⬇️ 点击下载</a></div>
   <button class="btn btn-p" id="pbBtn" onclick="processTool()" disabled>开始处理</button>
   <button class="btn btn-s" id="clBtn" onclick="clearFiles()" style="display:none">清空</button>
 </div>
@@ -239,7 +239,7 @@ function openTool(id){
   document.getElementById('qrc').style.display='none';
   document.getElementById('dz').style.display=t.needsFiles?'block':'none';
   document.getElementById('pbBtn').disabled=!t.needsFiles;
-  document.getElementById('pbBtn').textContent=currentLang==='zh'?'开始处理':'Start';
+  document.getElementById('pbBtn').textContent=t.btn_start;
   document.getElementById('fi').value='';
   document.getElementById('clBtn').style.display='none';
 }
@@ -256,7 +256,7 @@ function buildOptions(){
     case 'compress':h=`<h4 data-i18n="compress_quality">压缩质量</h4><div class="or"><select id="qSel" class="wid"><option value="extreme" data-i18n="compress_extreme">极限压缩（文件最小）</option><option value="recommended" selected data-i18n="compress_recommended">推荐（平衡）</option><option value="low" data-i18n="compress_low">低压缩（质量最高）</option></select></div>`;break;
     case 'rotate':
       h=`<h4 data-i18n="rotate_angle">旋转角度</h4>
-        <div class="or"><select id="rotDeg" class="wid"><option value="90" data-i18n="rotate_90">90° 顺时针</option><option value="180">180°</option><option value="270" data-i18n="rotate_270">270° 逆时针</option></select></div>
+        <div class="or"><select id="rotDeg" class="wid"><option value="90" data-i18n="rotate_90">90° 顺时针</option><option value="180" data-i18n="rotate_180">180°</option><option value="270" data-i18n="rotate_270">270° 逆时针</option></select></div>
         <div class="ol" style="margin-top:8px" data-i18n="rotate_pages_label">选择页面（留空=全部）：</div>
         <input type="text" id="rotPages" class="wid" data-i18n-placeholder="rotate_pages_placeholder" placeholder="如 1,3,5 或留空">`;break;
     case 'deletePages':h=`<h4 data-i18n="delete_pages_title">删除页面</h4><div class="ol" data-i18n="delete_pages_label">输入要删除的页码（如 2,4,5-7）：</div><input type="text" id="delPages" class="wid" data-i18n-placeholder="delete_pages_placeholder" placeholder="2,4,5-7">`;break;
@@ -359,18 +359,18 @@ function convertColor(){
     hex=input;rgb=hexToRgb(hex);hsl=rgbToHsl(rgb.r,rgb.g,rgb.b);
   }else if(input.startsWith('rgb')){
     const m=input.match(/(\d+),\s*(\d+),\s*(\d+)/);
-    if(!m){showError('RGB格式错误');return;}
+    if(!m){showError(I18N[currentLang].err_rgb_format);return;}
     rgb={r:parseInt(m[1]),g:parseInt(m[2]),b:parseInt(m[3])};
     hex=rgbToHex(rgb.r,rgb.g,rgb.b);
     hsl=rgbToHsl(rgb.r,rgb.g,rgb.b);
   }else if(input.startsWith('hsl')){
     const m=input.match(/(\d+),\s*(\d+)%?,\s*(\d+)%?/);
-    if(!m){showError('HSL格式错误');return;}
+    if(!m){showError(I18N[currentLang].err_hsl_format);return;}
     hsl={h:parseInt(m[1]),s:parseInt(m[2]),l:parseInt(m[3])};
     rgb=hslToRgb(hsl.h,hsl.s,hsl.l);
     hex=rgbToHex(rgb.r,rgb.g,rgb.b);
   }else{
-    showError('请输入 #hex、rgb() 或 hsl() 格式');
+    showError(I18N[currentLang].err_input_color);
     return;
   }
   document.getElementById('colorPreview').style.background=hex;
@@ -388,7 +388,7 @@ function hue2rgb(p,q,t){if(t<0)t+=1;if(t>1)t-=1;if(t<1/6)return p+(q-p)*6*t;if(t
 // QR Code using canvas
 function generateQR(){
   const text=document.getElementById('qrInput')?.value||'';
-  if(!text){showError('请输入内容');return;}
+  if(!text){showError(I18N[currentLang].err_qr_input);return;}
   const size=parseInt(document.getElementById('qrSize')?.value||250);
   const canvas=document.getElementById('qrc');
   canvas.width=size;canvas.height=size;
@@ -419,7 +419,7 @@ function generateQR(){
       if((row+col)%3===0){seed=(seed*9301+49297)%233280;ctx.fillStyle=seed%2===0?'#000':'#fff';ctx.fillRect(offset+col*moduleSize,offset+row*moduleSize,moduleSize,moduleSize);}
     }
   }
-  showResult('二维码已生成',canvas.toDataURL('image/png'),'qrcode.png','点击下载二维码图片');
+  showResult(I18N[currentLang].succ_qr,canvas.toDataURL('image/png'),'qrcode.png',I18N[currentLang].info);
 }
 
 // Draw QR position detection pattern
@@ -430,16 +430,16 @@ function drawPositionPattern(ctx,x,y,size){
   ctx.fillStyle='#000000';ctx.fillRect(x+s3*2,y+s3*2,s3*3,s3*3);
 }
 
-function base64Enc(){const v=document.getElementById('b64Input')?.value||'';if(!v){showError('请输入文本');return;}const enc=btoa(unescape(encodeURIComponent(v)));showTextOutput(enc);}
-function base64Dec(){const v=document.getElementById('b64Input')?.value||'';if(!v){showError('请输入Base64文本');return;}try{const dec=decodeURIComponent(escape(atob(v)));showTextOutput(dec);}catch(e){showError('Base64解码失败');}}
-function urlEnc(){const v=document.getElementById('urlInput')?.value||'';if(!v){showError('请输入URL');return;}showTextOutput(encodeURIComponent(v));}
-function urlDec(){const v=document.getElementById('urlInput')?.value||'';if(!v){showError('请输入URL编码字符串');return;}try{showTextOutput(decodeURIComponent(v));}catch(e){showError('URL解码失败');}}
+function base64Enc(){const v=document.getElementById('b64Input')?.value||'';if(!v){showError(I18N[currentLang].err_b64_input);return;}const enc=btoa(unescape(encodeURIComponent(v)));showTextOutput(enc);}
+function base64Dec(){const v=document.getElementById('b64Input')?.value||'';if(!v){showError(I18N[currentLang].err_b64_input);return;}try{const dec=decodeURIComponent(escape(atob(v)));showTextOutput(dec);}catch(e){showError(I18N[currentLang].err_rgb_format);}}
+function urlEnc(){const v=document.getElementById('urlInput')?.value||'';if(!v){showError(I18N[currentLang].err_url_input);return;}showTextOutput(encodeURIComponent(v));}
+function urlDec(){const v=document.getElementById('urlInput')?.value||'';if(!v){showError(I18N[currentLang].err_url_input);return;}try{showTextOutput(decodeURIComponent(v));}catch(e){showError(I18N[currentLang].err_url_decode);}}
 
 // Process tool
 async function processTool(){
   hideError();hideResult();hideTextOutput();
   const btn=document.getElementById('pbBtn');
-  btn.disabled=true;btn.textContent='处理中...';
+  btn.disabled=true;btn.textContent=I18N[currentLang].processing;
   setProgress(10);
   try{
     switch(ct){
@@ -457,12 +457,12 @@ async function processTool(){
       case 'imgConvert':await convertImages();break;
       case 'gifMaker':await makeGif();break;
     }
-  }catch(e){showError('处理失败: '+e.message);console.error(e);}
-  finally{btn.disabled=false;btn.textContent='开始处理';resetProgress();}
+  }catch(e){showError(I18N[currentLang].err_process_failed+e.message);console.error(e);}
+  finally{btn.disabled=false;btn.textContent=I18N[currentLang].btn_start;resetProgress();}
 }
 
 async function mergePDFs(){
-  if(files.length<2)throw new Error('请至少选择2个PDF文件');
+  if(files.length<2)throw new Error(I18N[currentLang].err_merge_min);
   setProgress(30);
   const merged=await PDFDocument.create();
   for(let i=0;i<files.length;i++){
@@ -474,11 +474,11 @@ async function mergePDFs(){
   }
   setProgress(95);
   const bytes=await merged.save();
-  showResult('已合并 '+files.length+' 个文件',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'merged.pdf');
+  showResult(I18N[currentLang].succ_merged+files.length+I18N[currentLang].succ_files,URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'merged.pdf');
 }
 
 async function splitPDF(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(20);
   const buf=await files[0].arrayBuffer();
   const pdf=await PDFDocument.load(buf);
@@ -490,10 +490,10 @@ async function splitPDF(){
     for(let i=0;i<total;i+=n)ranges.push([i,Math.min(i+n-1,total-1)]);
   }else{
     const inp=(document.getElementById('rangesIn')?.value||'').trim();
-    if(!inp)throw new Error('请输入页码范围');
+    if(!inp)throw new Error(I18N[currentLang].err_split_range);
     for(let p of inp.split(',')){
       const m=p.trim().match(/^(\d+)(?:-(\d+))?$/);
-      if(!m)throw new Error('范围格式错误: '+p);
+      if(!m)throw new Error(I18N[currentLang].err_split_format+p);
       ranges.push([parseInt(m[1])-1,m[2]?parseInt(m[2])-1:parseInt(m[1])-1]);
     }
   }
@@ -503,7 +503,7 @@ async function splitPDF(){
     const ps=await np.copyPages(pdf,[ranges[0][0]]);
     ps.forEach(p=>np.addPage(p));
     const b=await np.save();
-    showResult('已拆分为1个文件',URL.createObjectURL(new Blob([b],{type:'application/pdf'})),'split.pdf');
+    showResult(I18N[currentLang].succ_split_one,URL.createObjectURL(new Blob([b],{type:'application/pdf'})),'split.pdf');
   }else{
     const zip=new JSZip();
     for(let i=0;i<ranges.length;i++){
@@ -515,23 +515,23 @@ async function splitPDF(){
       setProgress(40+(i/ranges.length)*50);
     }
     const content=await zip.generateAsync({type:'blob'});
-    showResult('已拆分为 '+ranges.length+' 个文件',URL.createObjectURL(content),'split.zip');
+    showResult(I18N[currentLang].succ_split_multi+ranges.length+I18N[currentLang].succ_split_zip,URL.createObjectURL(content),'split.zip');
   }
 }
 
 async function compressPDF(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(30);
   const buf=await files[0].arrayBuffer();
   const pdf=await PDFDocument.load(buf);
   setProgress(60);
   const bytes=await pdf.save({useFlateDecoder:true,objectStreams:'generate'});
   const ratio=(bytes.length/files[0].size*100).toFixed(1);
-  showResult('压缩后: '+fs2(bytes.length)+' (原始: '+fs2(files[0].size)+', '+ratio+'%)',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'compressed.pdf');
+  showResult(I18N[currentLang].succ_compress+fs2(bytes.length)+I18N[currentLang].succ_compress_orig+fs2(files[0].size)+I18N[currentLang].succ_compress_ratio+')',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'compressed.pdf');
 }
 
 async function rotatePDF(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(20);
   const buf=await files[0].arrayBuffer();
   const pdf=await PDFDocument.load(buf);
@@ -548,13 +548,13 @@ async function rotatePDF(){
   }
   setProgress(95);
   const bytes=await pdf.save();
-  showResult('已旋转 '+toRotate.length+' 页',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'rotated.pdf');
+  showResult(I18N[currentLang].succ_rotate+toRotate.length+I18N[currentLang].succ_pages,URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'rotated.pdf');
 }
 
 async function deletePDFPages(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   const pagesInput=(document.getElementById('delPages')?.value||'').trim();
-  if(!pagesInput)throw new Error('请输入要删除的页码');
+  if(!pagesInput)throw new Error(I18N[currentLang].err_delete_input);
   setProgress(20);
   const buf=await files[0].arrayBuffer();
   const pdf=await PDFDocument.load(buf);
@@ -570,7 +570,7 @@ async function deletePDFPages(){
   }
   setProgress(95);
   const bytes=await newPdf.save();
-  showResult('已删除 '+toDelete.size+' 页，剩余 '+(total-toDelete.size)+' 页',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'deleted.pdf');
+  showResult(I18N[currentLang].succ_delete+toDelete.size+I18N[currentLang].succ_pages+I18N[currentLang].succ_remain+(total-toDelete.size)+I18N[currentLang].succ_pages,URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'deleted.pdf');
 }
 
 function parsePageList(str,total){
@@ -586,7 +586,7 @@ function parsePageList(str,total){
 }
 
 async function pdfToImages(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(20);
   const buf=await files[0].arrayBuffer();
   const doc=await pdfjsLib.getDocument({data:buf}).promise;
@@ -604,11 +604,11 @@ async function pdfToImages(){
     setProgress(20+(i/doc.numPages)*70);
   }
   const content=await zip.generateAsync({type:'blob'});
-  showResult('已将 '+doc.numPages+' 页转换为图片',URL.createObjectURL(content),'images.zip');
+  showResult(I18N[currentLang].succ_pdf2img+doc.numPages+I18N[currentLang].succ_converted_to_img,URL.createObjectURL(content),'images.zip');
 }
 
 async function imagesToPDF(){
-  if(files.length<1)throw new Error('请至少选择1张图片');
+  if(files.length<1)throw new Error(I18N[currentLang].err_compress_min);
   setProgress(20);
   const pdf=await PDFDocument.create();
   for(let i=0;i<files.length;i++){
@@ -623,11 +623,11 @@ async function imagesToPDF(){
   }
   setProgress(95);
   const bytes=await pdf.save();
-  showResult('已生成 PDF，共 '+files.length+' 页',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'images.pdf');
+  showResult(I18N[currentLang].succ_img2pdf+files.length+I18N[currentLang].succ_pages_in_pdf,URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'images.pdf');
 }
 
 async function extractText(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(20);
   const buf=await files[0].arrayBuffer();
   const doc=await pdfjsLib.getDocument({data:buf}).promise;
@@ -639,21 +639,21 @@ async function extractText(){
     setProgress(20+(i/doc.numPages)*70);
   }
   const blob=new Blob([text],{type:'text/plain'});
-  showResult('已提取 '+doc.numPages+' 页文字',URL.createObjectURL(blob),'extracted.txt');
+  showResult(I18N[currentLang].succ_extract+doc.numPages+I18N[currentLang].succ_text,URL.createObjectURL(blob),'extracted.txt');
 }
 
 async function unlockPDF(){
-  if(files.length!==1)throw new Error('请选择1个PDF');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_split_one);
   setProgress(30);
   const buf=await files[0].arrayBuffer();
   const pdf=await PDFDocument.load(buf,{password:''});
   setProgress(60);
   const bytes=await pdf.save();
-  showResult('PDF 已解锁',URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'unlocked.pdf');
+  showResult(I18N[currentLang].succ_unlock,URL.createObjectURL(new Blob([bytes],{type:'application/pdf'})),'unlocked.pdf');
 }
 
 async function compressImages(){
-  if(files.length<1)throw new Error('请至少选择1张图片');
+  if(files.length<1)throw new Error(I18N[currentLang].err_compress_min);
   setProgress(20);
   const q=parseInt(document.getElementById('compQ')?.value||80)/100;
   const fmt=document.getElementById('outFmt')?.value||'jpeg';
@@ -671,16 +671,16 @@ async function compressImages(){
     setProgress(20+(i/files.length)*70);
   }
   const content=await zip.generateAsync({type:'blob'});
-  showResult('已压缩 '+files.length+' 张图片',URL.createObjectURL(content),'compressed_images.zip');
+  showResult(I18N[currentLang].succ_compress_imgs+files.length+I18N[currentLang].succ_imgs,URL.createObjectURL(content),'compressed_images.zip');
 }
 
 async function resizeImages(){
-  if(files.length!==1)throw new Error('请选择1张图片');
+  if(files.length!==1)throw new Error(I18N[currentLang].err_resize_one);
   setProgress(20);
   const newW=parseInt(document.getElementById('newW')?.value)||0;
   const newH=parseInt(document.getElementById('newH')?.value)||0;
   const keepRatio=document.getElementById('keepRatio')?.checked;
-  if(!newW&&!newH)throw new Error('请输入宽度或高度');
+  if(!newW&&!newH)throw new Error(I18N[currentLang].err_resize_dim);
   const f=files[0];
   const img=await loadImg(f);
   let w=newW||Math.round(img.width*(newH/img.height));
@@ -698,7 +698,7 @@ async function resizeImages(){
 }
 
 async function convertImages(){
-  if(files.length<1)throw new Error('请至少选择1张图片');
+  if(files.length<1)throw new Error(I18N[currentLang].err_compress_min);
   setProgress(20);
   const fmt=document.getElementById('convFmt')?.value||'jpeg';
   const zip=new JSZip();
@@ -715,11 +715,11 @@ async function convertImages(){
     setProgress(20+(i/files.length)*70);
   }
   const content=await zip.generateAsync({type:'blob'});
-  showResult('已转换 '+files.length+' 张图片为 '+fmt.toUpperCase(),URL.createObjectURL(content),'converted.zip');
+  showResult(I18N[currentLang].succ_convert_imgs+files.length+I18N[currentLang].succ_to_fmt+fmt.toUpperCase(),URL.createObjectURL(content),'converted.zip');
 }
 
 async function makeGif(){
-  if(files.length<2)throw new Error('请至少选择2张图片制作GIF');
+  if(files.length<2)throw new Error(I18N[currentLang].err_gif_min);
   setProgress(20);
   const delay=parseInt(document.getElementById('gifDelay')?.value||500);
   const targetW=parseInt(document.getElementById('gifW')?.value||400);
@@ -731,7 +731,7 @@ async function makeGif(){
   const h=Math.round(imgs[0].height*ratio);
   // Simple GIF encoder
   const gif=await encodeGif(imgs,w,h,delay,setProgress);
-  showResult('已生成 GIF，共 '+files.length+' 帧',URL.createObjectURL(new Blob([gif],{type:'image/gif'})),'animation.gif');
+  showResult(I18N[currentLang].succ_gif+files.length+I18N[currentLang].succ_frames,URL.createObjectURL(new Blob([gif],{type:'image/gif'})),'animation.gif');
 }
 
 function loadImg(file){
@@ -807,8 +807,14 @@ async function encodeGif(imgs,w,h,delay,progressFn){
 
 <script>
 const I18N={
-  zh:{nav_pdf:'PDF工具',nav_img:'图片工具',nav_dev:'开发者',nav_feedback:'问题反馈',hero_tag:'完全免费 · 无需注册 · 隐私安全',hero_title:'免费在线工具箱',hero_desc:'PDF处理 · 图片压缩 · 二维码生成 · 编码转换<br>所有操作在浏览器完成，文件永不离开你的设备',cat_pdf:'PDF 工具',cat_img:'图片 工具',cat_dev:'开发者 工具',badge_hot:'热门',merge_title:'合并 PDF',merge_desc:'将多个 PDF 文件合并为一个',split_title:'拆分 PDF',split_desc:'按页数或范围拆分 PDF',compress_title:'压缩 PDF',compress_desc:'减小 PDF 文件大小',rotate_title:'旋转 PDF',rotate_desc:'旋转 PDF 页面角度',deletePages_title:'删除页面',deletePages_desc:'从 PDF 中删除指定页面',pdfToImage_title:'PDF 转图片',pdfToImage_desc:'PDF 页面转换为 JPG/PNG',imageToPdf_title:'图片转 PDF',imageToPdf_desc:'JPG/PNG 图片合并为 PDF',extractText_title:'提取文字',extractText_desc:'从 PDF 中提取文本内容',unlockPdf_title:'PDF 解锁',unlockPdf_desc:'去除 PDF 密码保护',imgCompress_title:'图片压缩',imgCompress_desc:'压缩 JPG/PNG 图片大小',imgResize_title:'调整图片大小',imgResize_desc:'修改图片尺寸和分辨率',imgConvert_title:'图片格式转换',imgConvert_desc:'JPG/PNG/WebP 互转',gifMaker_title:'GIF 制作',gifMaker_desc:'多张图片合成 GIF 动图',qrCode_title:'二维码生成',qrCode_desc:'文字/链接生成二维码图片',base64_title:'Base64 编解码',base64_desc:'文本与 Base64 字符串互转',urlEncode_title:'URL 编解码',urlEncode_desc:'URL 特殊字符编码转换',colorConvert_title:'颜色转换',colorConvert_desc:'HEX / RGB / HSL 颜色值互转',about_privacy:'隐私保护',about_privacy_desc:'所有处理在浏览器完成，文件永不上传到服务器',about_speed:'极速处理',about_speed_desc:'本地运算，无需等待上传下载',about_free:'完全免费',about_free_desc:'无广告内购，无使用限制',cat_about:'关于',ad_placeholder:'广告位 · Google AdSense',split_method:'拆分方式',split_by_range:'按范围',split_every_n:'每 N 页',split_range_label:'页码范围（如 1-3, 4-6）：',split_range_placeholder:'1-3, 4-6, 7-10',split_every_label:'每几页一份：',compress_quality:'压缩质量',compress_extreme:'极限压缩（文件最小）',compress_recommended:'推荐（平衡）',compress_low:'低压缩（质量最高）',rotate_angle:'旋转角度',rotate_90:'90° 顺时针',rotate_270:'270° 逆时针',rotate_pages_label:'选择页面（留空=全部）：',rotate_pages_placeholder:'如 1,3,5 或留空',delete_pages_title:'删除页面',delete_pages_label:'输入要删除的页码（如 2,4,5-7）：',delete_pages_placeholder:'2,4,5-7',pdf2img_format:'输出格式',pdf2img_quality:'质量：',imgcomp_quality:'压缩质量',imgcomp_target:'目标质量：',imgcomp_format:'输出格式：',imgcomp_jpg_small:'JPG（体积小）',imgcomp_png_quality:'PNG（质量高）',imgresize_size:'调整尺寸',imgresize_width:'宽度：',imgresize_height:'高度：',imgresize_w_placeholder:'像素',imgresize_h_placeholder:'自动',imgresize_keep_ratio:'保持宽高比',imgconv_format:'输出格式',gif_settings:'GIF 设置',gif_delay:'帧间隔：',gif_width:'宽：',qr_input:'输入内容',qr_placeholder:'输入文字或网址，如 https://example.com',qr_size_label:'二维码大小：',qr_generate:'生成二维码',b64_input:'输入文本',b64_placeholder:'输入要编码或解码的文本',b64_encode:'编码 →',b64_decode:'← 解码',url_input:'输入 URL',url_placeholder:'输入要编码或解码的 URL',url_encode:'编码 →',url_decode:'← 解码',color_input:'输入颜色值',color_placeholder:'输入颜色值，如 #2563eb 或 rgb(37,99,235)',color_convert:'转换',btn_start:'开始处理',btn_clear:'清空'},
-  en:{nav_pdf:'PDF Tools',nav_img:'Image Tools',nav_dev:'Developer',nav_feedback:'Feedback',hero_tag:'100% Free · No Registration · Privacy Safe',hero_title:'Free Online Toolkit',hero_desc:'PDF Processing · Image Compression · QR Code · Encoding<br>All processing done in browser, files never leave your device',cat_pdf:'PDF Tools',cat_img:'Image Tools',cat_dev:'Developer Tools',badge_hot:'Popular',merge_title:'Merge PDF',merge_desc:'Combine multiple PDF files into one',split_title:'Split PDF',split_desc:'Split PDF by pages or range',compress_title:'Compress PDF',compress_desc:'Reduce PDF file size',rotate_title:'Rotate PDF',rotate_desc:'Rotate PDF pages by angle',deletePages_title:'Delete Pages',deletePages_desc:'Remove specific pages from PDF',pdfToImage_title:'PDF to Images',pdfToImage_desc:'Convert PDF pages to JPG/PNG',imageToPdf_title:'Images to PDF',imageToPdf_desc:'Combine JPG/PNG images into PDF',extractText_title:'Extract Text',extractText_desc:'Extract text content from PDF',unlockPdf_title:'Unlock PDF',unlockPdf_desc:'Remove PDF password protection',imgCompress_title:'Compress Images',imgCompress_desc:'Compress JPG/PNG image size',imgResize_title:'Resize Images',imgResize_desc:'Change image dimensions and resolution',imgConvert_title:'Convert Image Format',imgConvert_desc:'Convert between JPG/PNG/WebP',gifMaker_title:'Make GIF',gifMaker_desc:'Combine images into animated GIF',qrCode_title:'QR Code Generator',qrCode_desc:'Generate QR code from text/URL',base64_title:'Base64 Encode/Decode',base64_desc:'Convert between text and Base64',urlEncode_title:'URL Encode/Decode',urlEncode_desc:'URL special character encoding',colorConvert_title:'Color Converter',colorConvert_desc:'Convert between HEX / RGB / HSL',about_privacy:'Privacy Protection',about_privacy_desc:'All processing in browser, files never uploaded to server',about_speed:'Fast Processing',about_speed_desc:'Local processing, no upload/download wait',about_free:'Completely Free',about_free_desc:'No ads, no in-app purchases, no limits',cat_about:'About',ad_placeholder:'Ad · Google AdSense',split_method:'Split Method',split_by_range:'By Range',split_every_n:'Every N Pages',split_range_label:'Page ranges (e.g. 1-3, 4-6):',split_range_placeholder:'1-3, 4-6, 7-10',split_every_label:'Pages per file:',compress_quality:'Compression Quality',compress_extreme:'Extreme (smallest)',compress_recommended:'Recommended (balanced)',compress_low:'Low (best quality)',rotate_angle:'Rotation Angle',rotate_90:'90° Clockwise',rotate_270:'270° Counter-clockwise',rotate_pages_label:'Select pages (empty = all):',rotate_pages_placeholder:'e.g. 1,3,5 or empty',delete_pages_title:'Delete Pages',delete_pages_label:'Enter pages to delete (e.g. 2,4,5-7):',delete_pages_placeholder:'2,4,5-7',pdf2img_format:'Output Format',pdf2img_quality:'Quality:',imgcomp_quality:'Compression Quality',imgcomp_target:'Target quality:',imgcomp_format:'Output format:',imgcomp_jpg_small:'JPG (smaller)',imgcomp_png_quality:'PNG (better quality)',imgresize_size:'Resize',imgresize_width:'Width:',imgresize_height:'Height:',imgresize_w_placeholder:'px',imgresize_h_placeholder:'auto',imgresize_keep_ratio:'Keep aspect ratio',imgconv_format:'Output Format',gif_settings:'GIF Settings',gif_delay:'Frame delay:',gif_width:'Width:',qr_input:'Input Content',qr_placeholder:'Enter text or URL, e.g. https://example.com',qr_size_label:'QR Code Size:',qr_generate:'Generate QR Code',b64_input:'Input Text',b64_placeholder:'Enter text to encode or decode',b64_encode:'Encode →',b64_decode:'← Decode',url_input:'Input URL',url_placeholder:'Enter URL to encode or decode',url_encode:'Encode →',url_decode:'← Decode',color_input:'Input Color Value',color_placeholder:'Enter color value, e.g. #2563eb or rgb(37,99,235)',color_convert:'Convert',btn_start:'Start',btn_clear:'Clear'},
+  zh:{nav_pdf:'PDF工具',nav_img:'图片工具',nav_dev:'开发者',nav_feedback:'问题反馈',hero_tag:'完全免费 · 无需注册 · 隐私安全',hero_title:'免费在线工具箱',hero_desc:'PDF处理 · 图片压缩 · 二维码生成 · 编码转换<br>所有操作在浏览器完成，文件永不离开你的设备',cat_pdf:'PDF 工具',cat_img:'图片 工具',cat_dev:'开发者 工具',badge_hot:'热门',merge_title:'合并 PDF',merge_desc:'将多个 PDF 文件合并为一个',split_title:'拆分 PDF',split_desc:'按页数或范围拆分 PDF',compress_title:'压缩 PDF',compress_desc:'减小 PDF 文件大小',rotate_title:'旋转 PDF',rotate_desc:'旋转 PDF 页面角度',deletePages_title:'删除页面',deletePages_desc:'从 PDF 中删除指定页面',pdfToImage_title:'PDF 转图片',pdfToImage_desc:'PDF 页面转换为 JPG/PNG',imageToPdf_title:'图片转 PDF',imageToPdf_desc:'JPG/PNG 图片合并为 PDF',extractText_title:'提取文字',extractText_desc:'从 PDF 中提取文本内容',unlockPdf_title:'PDF 解锁',unlockPdf_desc:'去除 PDF 密码保护',imgCompress_title:'图片压缩',imgCompress_desc:'压缩 JPG/PNG 图片大小',imgResize_title:'调整图片大小',imgResize_desc:'修改图片尺寸和分辨率',imgConvert_title:'图片格式转换',imgConvert_desc:'JPG/PNG/WebP 互转',gifMaker_title:'GIF 制作',gifMaker_desc:'多张图片合成 GIF 动图',qrCode_title:'二维码生成',qrCode_desc:'文字/链接生成二维码图片',base64_title:'Base64 编解码',base64_desc:'文本与 Base64 字符串互转',urlEncode_title:'URL 编解码',urlEncode_desc:'URL 特殊字符编码转换',colorConvert_title:'颜色转换',colorConvert_desc:'HEX / RGB / HSL 颜色值互转',about_privacy:'隐私保护',about_privacy_desc:'所有处理在浏览器完成，文件永不上传到服务器',about_speed:'极速处理',about_speed_desc:'本地运算，无需等待上传下载',about_free:'完全免费',about_free_desc:'无广告内购，无使用限制',cat_about:'关于',ad_placeholder:'广告位 · Google AdSense',split_method:'拆分方式',split_by_range:'按范围',split_every_n:'每 N 页',split_range_label:'页码范围（如 1-3, 4-6）：',split_range_placeholder:'1-3, 4-6, 7-10',split_every_label:'每几页一份：',compress_quality:'压缩质量',compress_extreme:'极限压缩（文件最小）',compress_recommended:'推荐（平衡）',compress_low:'低压缩（质量最高）',rotate_angle:'旋转角度',rotate_90:'90° 顺时针',rotate_270:'270° 逆时针',rotate_180:'180°',rotate_pages_label:'选择页面（留空=全部）：',rotate_pages_placeholder:'如 1,3,5 或留空',delete_pages_title:'删除页面',delete_pages_label:'输入要删除的页码（如 2,4,5-7）：',delete_pages_placeholder:'2,4,5-7',pdf2img_format:'输出格式',pdf2img_quality:'质量：',imgcomp_quality:'压缩质量',imgcomp_target:'目标质量：',imgcomp_format:'输出格式：',imgcomp_jpg_small:'JPG（体积小）',imgcomp_png_quality:'PNG（质量高）',imgresize_size:'调整尺寸',imgresize_width:'宽度：',imgresize_height:'高度：',imgresize_w_placeholder:'像素',imgresize_h_placeholder:'自动',imgresize_keep_ratio:'保持宽高比',imgconv_format:'输出格式',gif_settings:'GIF 设置',gif_delay:'帧间隔：',gif_width:'宽：',qr_input:'输入内容',qr_placeholder:'输入文字或网址，如 https://example.com',qr_size_label:'二维码大小：',qr_generate:'生成二维码',b64_input:'输入文本',b64_placeholder:'输入要编码或解码的文本',b64_encode:'编码 →',b64_decode:'← 解码',url_input:'输入 URL',url_placeholder:'输入要编码或解码的 URL',url_encode:'编码 →',url_decode:'← 解码',color_input:'输入颜色值',color_placeholder:'输入颜色值，如 #2563eb 或 rgb(37,99,235)',color_convert:'转换',btn_start:'开始处理',btn_clear:'清空',back_to_tools:'← 返回工具箱',processing:'处理中...',rbx_title:'✅ 处理完成！',dl_text:'⬇️ 点击下载',btn_remove:'✕',
+err_rgb_format:'RGB格式错误',err_hsl_format:'HSL格式错误',err_b64_input:'请输入Base64文本',err_b64_decode:'Base64解码失败',err_url_input:'请输入URL',err_url_decode:'URL解码失败',err_input_color:'请输入 #hex、rgb() 或 hsl() 格式',err_qr_input:'请输入内容',err_merge_min:'请至少选择2个PDF文件',err_split_one:'请选择1个PDF',err_split_range:'请输入页码范围',err_split_format:'范围格式错误: ',err_compress_one:'请选择1个PDF',err_rotate_one:'请选择1个PDF',err_delete_input:'请输入要删除的页码',err_delete_one:'请选择1个PDF',err_pdf2img_one:'请选择1个PDF',err_img2pdf_min:'请至少选择1张图片',err_extract_one:'请选择1个PDF',err_unlock_one:'请选择1个PDF',err_compress_min:'请至少选择1张图片',err_resize_one:'请选择1张图片',err_resize_dim:'请输入宽度或高度',err_convert_min:'请至少选择1张图片',err_gif_min:'请至少选择2张图片制作GIF',err_process_failed:'处理失败: ',
+succ_qr:'二维码已生成',succ_merged:'已合并 ',succ_files:' 个文件',succ_split_one:'已拆分为1个文件',succ_split_multi:'已拆分为 ',succ_split_zip:' 个文件',succ_compress:'压缩后: ',succ_compress_orig:' (原始: ',succ_compress_ratio:')',succ_rotate:'已旋转 ',succ_pages:' 页',succ_delete:'已删除 ',succ_remain:'，剩余 ',succ_pdf2img:'已将 ',succ_converted_to_img:' 页转换为图片',succ_img2pdf:'已生成 PDF，共 ',succ_pages_in_pdf:' 页',succ_extract:'已提取 ',succ_text:' 页文字',succ_unlock:'PDF 已解锁',succ_compress_imgs:'已压缩 ',succ_imgs:' 张图片',succ_resized:'已调整为 ',succ_convert_imgs:'已转换 ',succ_to_fmt:' 张图片为 ',succ_gif:'已生成 GIF，共 ',succ_frames:' 帧',succ_result:'处理完成！',
+info:'点击下载二维码图片'},
+  en:{nav_pdf:'PDF Tools',nav_img:'Image Tools',nav_dev:'Developer',nav_feedback:'Feedback',hero_tag:'100% Free · No Registration · Privacy Safe',hero_title:'Free Online Toolkit',hero_desc:'PDF Processing · Image Compression · QR Code · Encoding<br>All processing done in browser, files never leave your device',cat_pdf:'PDF Tools',cat_img:'Image Tools',cat_dev:'Developer Tools',badge_hot:'Popular',merge_title:'Merge PDF',merge_desc:'Combine multiple PDF files into one',split_title:'Split PDF',split_desc:'Split PDF by pages or range',compress_title:'Compress PDF',compress_desc:'Reduce PDF file size',rotate_title:'Rotate PDF',rotate_desc:'Rotate PDF pages by angle',deletePages_title:'Delete Pages',deletePages_desc:'Remove specific pages from PDF',pdfToImage_title:'PDF to Images',pdfToImage_desc:'Convert PDF pages to JPG/PNG',imageToPdf_title:'Images to PDF',imageToPdf_desc:'Combine JPG/PNG images into PDF',extractText_title:'Extract Text',extractText_desc:'Extract text content from PDF',unlockPdf_title:'Unlock PDF',unlockPdf_desc:'Remove PDF password protection',imgCompress_title:'Compress Images',imgCompress_desc:'Compress JPG/PNG image size',imgResize_title:'Resize Images',imgResize_desc:'Change image dimensions and resolution',imgConvert_title:'Convert Image Format',imgConvert_desc:'Convert between JPG/PNG/WebP',gifMaker_title:'Make GIF',gifMaker_desc:'Combine images into animated GIF',qrCode_title:'QR Code Generator',qrCode_desc:'Generate QR code from text/URL',base64_title:'Base64 Encode/Decode',base64_desc:'Convert between text and Base64',urlEncode_title:'URL Encode/Decode',urlEncode_desc:'URL special character encoding',colorConvert_title:'Color Converter',colorConvert_desc:'Convert between HEX / RGB / HSL',about_privacy:'Privacy Protection',about_privacy_desc:'All processing in browser, files never uploaded to server',about_speed:'Fast Processing',about_speed_desc:'Local processing, no upload/download wait',about_free:'Completely Free',about_free_desc:'No ads, no in-app purchases, no limits',cat_about:'About',ad_placeholder:'Ad · Google AdSense',split_method:'Split Method',split_by_range:'By Range',split_every_n:'Every N Pages',split_range_label:'Page ranges (e.g. 1-3, 4-6):',split_range_placeholder:'1-3, 4-6, 7-10',split_every_label:'Pages per file:',compress_quality:'Compression Quality',compress_extreme:'Extreme (smallest)',compress_recommended:'Recommended (balanced)',compress_low:'Low (best quality)',rotate_angle:'Rotation Angle',rotate_90:'90° Clockwise',rotate_270:'270° Counter-clockwise',rotate_180:'180°',rotate_pages_label:'Select pages (empty = all):',rotate_pages_placeholder:'e.g. 1,3,5 or empty',delete_pages_title:'Delete Pages',delete_pages_label:'Enter pages to delete (e.g. 2,4,5-7):',delete_pages_placeholder:'2,4,5-7',pdf2img_format:'Output Format',pdf2img_quality:'Quality:',imgcomp_quality:'Compression Quality',imgcomp_target:'Target quality:',imgcomp_format:'Output format:',imgcomp_jpg_small:'JPG (smaller)',imgcomp_png_quality:'PNG (better quality)',imgresize_size:'Resize',imgresize_width:'Width:',imgresize_height:'Height:',imgresize_w_placeholder:'px',imgresize_h_placeholder:'auto',imgresize_keep_ratio:'Keep aspect ratio',imgconv_format:'Output Format',gif_settings:'GIF Settings',gif_delay:'Frame delay:',gif_width:'Width:',qr_input:'Input Content',qr_placeholder:'Enter text or URL, e.g. https://example.com',qr_size_label:'QR Code Size:',qr_generate:'Generate QR Code',b64_input:'Input Text',b64_placeholder:'Enter text to encode or decode',b64_encode:'Encode →',b64_decode:'← Decode',url_input:'Input URL',url_placeholder:'Enter URL to encode or decode',url_encode:'Encode →',url_decode:'← Decode',color_input:'Input Color Value',color_placeholder:'Enter color value, e.g. #2563eb or rgb(37,99,235)',color_convert:'Convert',btn_start:'Start',btn_clear:'Clear',back_to_tools:'← Back to Tools',processing:'Processing...',rbx_title:'✅ Done!',dl_text:'⬇️ Download',btn_remove:'✕',
+err_rgb_format:'Invalid RGB format',err_hsl_format:'Invalid HSL format',err_b64_input:'Enter Base64 text',err_b64_decode:'Base64 decode failed',err_url_input:'Enter URL',err_url_decode:'URL decode failed',err_input_color:'Enter #hex, rgb() or hsl() format',err_qr_input:'Please enter content',err_merge_min:'Select at least 2 PDF files',err_split_one:'Select 1 PDF',err_split_range:'Enter page range',err_split_format:'Invalid range format: ',err_compress_one:'Select 1 PDF',err_rotate_one:'Select 1 PDF',err_delete_input:'Enter pages to delete',err_delete_one:'Select 1 PDF',err_pdf2img_one:'Select 1 PDF',err_img2pdf_min:'Select at least 1 image',err_extract_one:'Select 1 PDF',err_unlock_one:'Select 1 PDF',err_compress_min:'Select at least 1 image',err_resize_one:'Select 1 image',err_resize_dim:'Enter width or height',err_convert_min:'Select at least 1 image',err_gif_min:'Select at least 2 images to make GIF',err_process_failed:'Processing failed: ',
+succ_qr:'QR code generated',succ_merged:'Merged ',succ_files:' files',succ_split_one:'Split into 1 file',succ_split_multi:'Split into ',succ_split_zip:' files',succ_compress:'Compressed: ',succ_compress_orig:' (original: ',succ_compress_ratio:')',succ_rotate:'Rotated ',succ_pages:' pages',succ_delete:'Deleted ',succ_remain:', remaining ',succ_pdf2img:'Converted ',succ_converted_to_img:' pages to images',succ_img2pdf:'Generated PDF with ',succ_pages_in_pdf:' pages',succ_extract:'Extracted text from ',succ_text:' pages',succ_unlock:'PDF Unlocked',succ_compress_imgs:'Compressed ',succ_imgs:' images',succ_resized:'Resized to ',succ_convert_imgs:'Converted ',succ_to_fmt:' images to ',succ_gif:'Generated GIF with ',succ_frames:' frames',succ_result:'Processing complete!',
+info:'Click to download QR code image'},
 };
 let currentLang='zh';
 function toggleLang(){currentLang=currentLang==='zh'?'en':'zh';applyLang();localStorage.setItem('pdfzone_lang',currentLang);document.getElementById('langBtn').textContent=currentLang==='zh'?'🌐 EN':'🌐 中';}
@@ -822,8 +828,8 @@ function applyLang(){
     document.getElementById('td').textContent=T[ct].desc[currentLang];
     document.getElementById('dzt').textContent=T[ct].title[currentLang];
     document.getElementById('dzh').textContent=T[ct].hint[currentLang];
-    document.getElementById('pbBtn').textContent=currentLang==='zh'?'开始处理':'Start';
-    document.getElementById('clBtn').textContent=currentLang==='zh'?'清空':'Clear';
+    document.getElementById('pbBtn').textContent=t.btn_start;
+    document.getElementById('clBtn').textContent=t.btn_clear;
     buildOptions();
   }
 }
