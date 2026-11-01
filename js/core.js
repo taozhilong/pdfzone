@@ -13,10 +13,19 @@ function defTool(id,cfg,opts,run){
   if(run)RUN[id]=run;
 }
 
-function showHome(){document.getElementById('home-view').style.display='block';document.getElementById('tv').classList.remove('act');files=[];}
+// 记住进入工具前的滚动位置,返回时恢复
+let _homeScroll=0;
+
+function showHome(){
+  document.getElementById('home-view').style.display='block';
+  document.getElementById('tv').classList.remove('act');
+  files=[];
+  window.scrollTo(0,_homeScroll);
+}
 
 function openTool(id){
   ct=id;const t=T[id];
+  _homeScroll=window.scrollY;
   document.getElementById('home-view').style.display='none';
   document.getElementById('tv').classList.add('act');
   document.getElementById('tt').textContent=t.title[currentLang];
