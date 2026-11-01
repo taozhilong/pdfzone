@@ -517,17 +517,17 @@ function urlDec(){const v=document.getElementById('urlInput')?.value||'';if(!v){
 // JSON formatter (input left / output right)
 function jsonInputVal(){return document.getElementById('jsonInput')?.value||'';}
 function jsonOut(v){const el=document.getElementById('jsonOut');if(el)el.value=v;}
-function jsonPretty(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(JSON.parse(v),null,2));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
-function jsonMinify(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(JSON.parse(v)));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
-// 去转义:把 {\"a\":\"b\\n\"} 这类从日志/字符串字面量里复制出来的转义串还原
+const JSON_ESC_MAP={'"':'"','\\':'\\','n':'\n','t':'\t','r':'\r','/':'/','b':'\b','f':'\f',"'":"'"};
+function jsonUnescapeStr(v){return v.replace(/\\(.)/g,(m,c)=>JSON_ESC_MAP[c]!==undefined?JSON_ESC_MAP[c]:m);}
+// 解析原文;不是合法 JSON 时自动尝试按转义串还原后再解析
+function jsonParse(v){try{return JSON.parse(v);}catch(e){return JSON.parse(jsonUnescapeStr(v));}}
+function jsonPretty(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(jsonParse(v),null,2));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
+function jsonMinify(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(jsonParse(v)));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
+// 去转义:只还原转义符,不改格式
 function jsonUnescape(){
   const v=jsonInputVal();
   if(!v){showError(I18N[currentLang].err_json_input);return;}
-  const map={'"':'"','\\':'\\','n':'\n','t':'\t','r':'\r','/':'/','b':'\b','f':'\f',"'":"'"};
-  let r=v.replace(/\\(.)/g,(m,c)=>map[c]!==undefined?map[c]:m);
-  // 去转义后如果是合法 JSON,顺手格式化方便阅读
-  try{r=JSON.stringify(JSON.parse(r),null,2);}catch(e){}
-  jsonOut(r);hideError();
+  jsonOut(jsonUnescapeStr(v));hideError();
 }
 async function jsonCopy(){
   const el=document.getElementById('jsonOut');
