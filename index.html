@@ -523,11 +523,12 @@ function jsonUnescapeStr(v){return v.replace(/\\(.)/g,(m,c)=>JSON_ESC_MAP[c]!==u
 function jsonParse(v){try{return JSON.parse(v);}catch(e){return JSON.parse(jsonUnescapeStr(v));}}
 function jsonPretty(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(jsonParse(v),null,2));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
 function jsonMinify(){const v=jsonInputVal();if(!v){showError(I18N[currentLang].err_json_input);return;}try{jsonOut(JSON.stringify(jsonParse(v)));hideError();}catch(e){showError(I18N[currentLang].err_json_invalid+e.message);}}
-// 去转义:只还原转义符,不改格式
+// 去转义:直接把第一个框里的转义符去掉(原地修改输入)
 function jsonUnescape(){
-  const v=jsonInputVal();
+  const inp=document.getElementById('jsonInput');
+  const v=inp?.value||'';
   if(!v){showError(I18N[currentLang].err_json_input);return;}
-  jsonOut(jsonUnescapeStr(v));hideError();
+  inp.value=jsonUnescapeStr(v);hideError();
 }
 async function jsonCopy(){
   const el=document.getElementById('jsonOut');
