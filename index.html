@@ -31,6 +31,7 @@
     <a href="#" onclick="document.getElementById('pdf-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_pdf">PDF工具</a>
     <a href="#" onclick="document.getElementById('img-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_img">图片工具</a>
     <a href="#" onclick="document.getElementById('dev-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_dev">开发者</a>
+    <a href="#" onclick="document.getElementById('more-tools').scrollIntoView({behavior:'smooth'});return false" data-i18n="nav_more">更多工具</a>
     <a href="https://github.com/taozhilong/pdfzone/issues" target="_blank" rel="noopener" data-i18n="nav_feedback">问题反馈</a>
     <button class="lang-btn" onclick="toggleLang()" id="langBtn">🌐 EN</button>
   </nav>
@@ -86,6 +87,11 @@
         <div class="tc" onclick="openTool('baseConvert')"><div class="ti">🔟</div><h3 data-i18n="baseConvert_title">进制转换</h3><p data-i18n="baseConvert_desc">二/八/十/十六进制互转</p></div>
         <div class="tc" onclick="openTool('urlParams')"><div class="ti">🧩</div><h3 data-i18n="urlParams_title">URL 参数解析</h3><p data-i18n="urlParams_desc">查询串拆成参数表格/JSON</p></div>
         <div class="tc" onclick="openTool('textClean')"><div class="ti">🧹</div><h3 data-i18n="textClean_title">去重排序</h3><p data-i18n="textClean_desc">文本行去重/排序/去空行</p></div>
+      </div>
+    </div>
+    <div class="cat" id="more-tools">
+      <div class="ct"><span data-i18n="cat_more">更多工具</span></div>
+      <div class="grid">
         <div class="tc" onclick="openTool('regexTest')"><div class="ti">𝄐</div><h3 data-i18n="regexTest_title">正则测试</h3><p data-i18n="regexTest_desc">正则表达式匹配测试</p></div>
         <div class="tc" onclick="openTool('jwtDecode')"><div class="ti">🎟️</div><h3 data-i18n="jwtDecode_title">JWT 解码</h3><p data-i18n="jwtDecode_desc">解析 JWT 的头部与载荷</p></div>
         <div class="tc" onclick="openTool('csvJson')"><div class="ti">📊</div><h3 data-i18n="csvJson_title">CSV ↔ JSON</h3><p data-i18n="csvJson_desc">CSV 与 JSON 互转</p></div>
